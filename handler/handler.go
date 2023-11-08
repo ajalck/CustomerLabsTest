@@ -25,6 +25,7 @@ func HandleJSONRequest(w http.ResponseWriter, r *http.Request) {
 	webhookURL := "https://webhook.site/0f5750a7-7c86-4c41-ac4b-6b261dcf7b62"
 	resp, err := http.Post(webhookURL, "application/json", bytes.NewBuffer(outputbytes))
 	if err != nil {
+		w.WriteHeader(resp.StatusCode)
 		w.Write([]byte(err.Error()))
 		return
 	}
