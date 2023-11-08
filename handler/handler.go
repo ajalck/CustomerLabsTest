@@ -5,7 +5,6 @@ import (
 	"CustomerLabsTest/worker"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -26,16 +25,17 @@ func HandleJSONRequest(w http.ResponseWriter, r *http.Request) {
 	webhookURL := "https://webhook.site/0f5750a7-7c86-4c41-ac4b-6b261dcf7b62"
 	resp, err := http.Post(webhookURL, "application/json", bytes.NewBuffer(outputbytes))
 	if err != nil {
-		fmt.Println("Error sending POST request:", err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	defer resp.Body.Close()
 
 	// Check the response status
 	if resp.StatusCode == http.StatusOK {
-		fmt.Println("Webhook sent successfully")
+		w.WriteHeader(resp.StatusCode)
+		w.Write([]byte("Webhook sent successfully"))
 	} else {
-		fmt.Println("Webhook request failed with status:", resp.Status)
+		w.WriteHeader(resp.StatusCode)
+		w.Write([]byte("Webhook request failed with status: " + resp.Status))
 	}
-	w.WriteHeader(200)
 }
